@@ -1,4 +1,4 @@
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE  1
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
   00000005            00039     USUART_BUFFER_5
   00000006            00040     USUART_BUFFER_6
   00000007            00041     USUART_BUFFER_7
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE  2
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE  2
 USUART Communication
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -116,7 +116,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00092     ;</editor-fold>
                       00093 ;=========================================================
                       00094 ;RESET VECTORS
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE  3
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE  3
 USUART Communication
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -175,7 +175,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000028 6B39           00145     CLRF ANSELB         ; clear bits for all pins
                       00146 
                       00147         ;</editor-fold>
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE  4
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE  4
 USUART Communication
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -234,7 +234,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000050 8AAC           00198     BSF TXSTA, TXEN ; Enable transmission
 000052 84AC           00199     BSF TXSTA, BRGH ; Enable high baud rate select
                       00200 
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE  5
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE  5
 USUART Communication
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -281,182 +281,184 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00006E 989E           00239     BCF PIR1, TX1IF ; Clear USUART TX interrupts
 000070 989D           00240     BCF PIE1, TX1IE ; Disable USUART TX interrupts
                       00241 
-                      00242     ;</editor-fold>
-                      00243 ;=========================================================
-                      00244 ;DELAYS
+000072 EF?? F???      00242     GOTO MAIN ; Loop MAIN
+                      00243 
+                      00244     ;</editor-fold>
                       00245 ;=========================================================
-                      00246     ;<editor-fold defaultstate="collapsed" desc="DELAYS">
-                      00247 
-                      00248     ;<editor-fold defaultstate="collapsed" desc="DELAY">
-000072                00249 delay1s
-000072 0E0F           00250     MOVLW   0x0F
-000074 6E0C           00251     MOVWF   delay3
-000076                00252 Go_off0
-000076 0EFF           00253     movlw       0xFF
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE  6
+                      00246 ;DELAYS
+                      00247 ;=========================================================
+                      00248     ;<editor-fold defaultstate="collapsed" desc="DELAYS">
+                      00249 
+                      00250     ;<editor-fold defaultstate="collapsed" desc="DELAY">
+000076                00251 delay1s
+000076 0E0F           00252     MOVLW   0x0F
+000078 6E0C           00253     MOVWF   delay3
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE  6
 USUART Communication
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000078 6E0B           00254     movwf       delay2
-00007A                00255 Go_off1
-00007A 0EFF           00256     movlw       0xFF
-00007C 6E0A           00257     movwf       delay1
-00007E                00258 Go_off2
-00007E 2E0A           00259     decfsz      delay1,f
-000080 EF?? F???      00260     goto        Go_off2
-000084 2E0B           00261     decfsz      delay2,f
-000086 EF?? F???      00262     goto        Go_off1
-00008A 2E0C           00263     decfsz      delay3,f
-00008C EF?? F???      00264     goto        Go_off0
-000090 0012           00265     RETURN
-                      00266 ;</editor-fold>
-                      00267 
-                      00268     ;</editor-fold>
-                      00269 ;=========================================================
-                      00270 ;USUART
+00007A                00254 Go_off0
+00007A 0EFF           00255     movlw       0xFF
+00007C 6E0B           00256     movwf       delay2
+00007E                00257 Go_off1
+00007E 0EFF           00258     movlw       0xFF
+000080 6E0A           00259     movwf       delay1
+000082                00260 Go_off2
+000082 2E0A           00261     decfsz      delay1,f
+000084 EF?? F???      00262     goto        Go_off2
+000088 2E0B           00263     decfsz      delay2,f
+00008A EF?? F???      00264     goto        Go_off1
+00008E 2E0C           00265     decfsz      delay3,f
+000090 EF?? F???      00266     goto        Go_off0
+000094 0012           00267     RETURN
+                      00268 ;</editor-fold>
+                      00269 
+                      00270     ;</editor-fold>
                       00271 ;=========================================================
-                      00272    ;<editor-fold defaultstate="collapsed" desc="USUART">
-                      00273 
-                      00274     ;------------------------------------------------
-                      00275     ;USUART_RECEIVE
+                      00272 ;USUART
+                      00273 ;=========================================================
+                      00274    ;<editor-fold defaultstate="collapsed" desc="USUART">
+                      00275 
                       00276     ;------------------------------------------------
-                      00277     ;<editor-fold defaultstate="collapsed" desc="USUART_RECEIVE">
-                      00278 
-000092                00279 USUART_RECEIVE
-000092 9A9D           00280     BCF PIE1, RC1IE ; Disable RX interrupts
-000094 50AE           00281     MOVF RCREG1, W ; Move received byte to WREG
-                      00282 
-000096 A009           00283     BTFSS USUART_RX_ECHO_FLAG, 0 ; Check the echo flag
-000098 EF?? F???      00284     GOTO USUART_RX_END
-                      00285 
-00009C                00286 USUART_RX_ECHO ; Echo the receive data
-00009C EF?? F???      00287     GOTO USUART_TRANSMIT
-                      00288 
-0000A0                00289 USUART_RX_END
-0000A0 9A9E           00290     BCF PIR1, RC1IF ; Clear RX interrupt
-0000A2 8A9D           00291     BSF PIE1, RC1IE ; Enable RX interrupt
-0000A4 8EF2           00292     BSF INTCON, GIE ; Enable Global interrupts
-0000A6 8CF2           00293     BSF INTCON, PEIE ; Enable Peripheral interrupts
-                      00294 
-0000A8 EF?? F???      00295     GOTO MAIN
+                      00277     ;USUART_RECEIVE
+                      00278     ;------------------------------------------------
+                      00279     ;<editor-fold defaultstate="collapsed" desc="USUART_RECEIVE">
+                      00280 
+000096                00281 USUART_RECEIVE
+000096 9A9D           00282     BCF PIE1, RC1IE ; Disable RX interrupts
+000098 50AE           00283     MOVF RCREG1, W ; Move received byte to WREG
+                      00284 
+00009A A009           00285     BTFSS USUART_RX_ECHO_FLAG, 0 ; Check the echo flag
+00009C EF?? F???      00286     GOTO USUART_RX_END
+                      00287 
+0000A0                00288 USUART_RX_ECHO ; Echo the receive data
+0000A0 EF?? F???      00289     GOTO USUART_TRANSMIT
+                      00290 
+0000A4                00291 USUART_RX_END ; End of the USUART_RECEIVE subroutine
+0000A4 9A9E           00292     BCF PIR1, RC1IF ; Clear RX interrupt
+0000A6 8A9D           00293     BSF PIE1, RC1IE ; Enable RX interrupt
+0000A8 8EF2           00294     BSF INTCON, GIE ; Enable Global interrupts
+0000AA 8CF2           00295     BSF INTCON, PEIE ; Enable Peripheral interrupts
                       00296 
-                      00297     ;</editor-fold>
+0000AC 0010           00297     RETFIE
                       00298 
-                      00299     ;------------------------------------------------
-                      00300     ;USUART_TRANSMIT
+                      00299     ;</editor-fold>
+                      00300 
                       00301     ;------------------------------------------------
-                      00302     ;<editor-fold defaultstate="collapsed" desc="USUART_TRANSMIT">
-                      00303 
-0000AC                00304 USUART_TRANSMIT ; Transmit byte currently in WREG
-0000AC 9A9D           00305     BCF PIE1, RC1IE ; Disable RX interrupts
-0000AE 989E           00306     BCF PIR1, TX1IF ; Clear TX interrupts
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE  7
+                      00302     ;USUART_TRANSMIT
+                      00303     ;------------------------------------------------
+                      00304     ;<editor-fold defaultstate="collapsed" desc="USUART_TRANSMIT">
+                      00305 
+0000AE                00306 USUART_TRANSMIT ; Transmit byte currently in WREG
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE  7
 USUART Communication
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00307 
-0000B0 6EAD           00308     MOVWF TXREG1 ; Move WREG byte to TX register
+0000AE 9A9D           00307     BCF PIE1, RC1IE ; Disable RX interrupts
+0000B0 989E           00308     BCF PIR1, TX1IF ; Clear TX interrupts
                       00309 
-0000B2                00310 WAIT_FOR_TRANSMIT ; Wait for data to be sent
-0000B2 A2AC           00311     BTFSS TXSTA1, TRMT ; Check if transmission is complete
-0000B4 EF?? F???      00312     GOTO WAIT_FOR_TRANSMIT ; Loop until complete
-                      00313 
-0000B8 8A9D           00314     BSF PIE1, RC1IE ; Enable RX interrupts
-0000BA 989E           00315     BCF PIR1, TX1IF ; Clear TX interrupts
-0000BC 0010           00316     RETFIE
-                      00317 
-                      00318     ;</editor-fold>
+0000B2 6EAD           00310     MOVWF TXREG1 ; Move WREG byte to TX register
+                      00311 
+0000B4                00312 WAIT_FOR_TRANSMIT ; Wait for data to be sent
+0000B4 A2AC           00313     BTFSS TXSTA1, TRMT ; Check if transmission is complete
+0000B6 EF?? F???      00314     GOTO WAIT_FOR_TRANSMIT ; Loop until complete
+                      00315 
+0000BA 8A9D           00316     BSF PIE1, RC1IE ; Enable RX interrupts
+0000BC 989E           00317     BCF PIR1, TX1IF ; Clear TX interrupts
+0000BE 0010           00318     RETFIE
                       00319 
-                      00320     ;------------------------------------------------
-                      00321     ;USUART Error handeling
+                      00320     ;</editor-fold>
+                      00321 
                       00322     ;------------------------------------------------
-                      00323      ;<editor-fold defaultstate="collapsed" desc="USUART_ERROR_HANDELING">
-                      00324 
-                      00325     ; Overrun error
-0000BE                00326 ErrSerialOverr
-0000BE 98AB           00327     BCF RCSTA1,CREN     ;reset the receiver logic
-0000C0 88AB           00328     BSF RCSTA1,CREN     ;enable reception again
-0000C2 8008           00329     BSF USUART_ERROR_FLAG,0
-0000C4 0012           00330     RETURN
-                      00331 
-                      00332     ; Framing error
-0000C6                00333 ErrSerialFrame
-0000C6 50AE           00334     MOVF RCREG1,W               ;discard received data that has error
-0000C8 8008           00335     BSF USUART_ERROR_FLAG,0
-0000CA 0012           00336     RETURN
-                      00337 
-                      00338     ; Nothing received
-0000CC                00339 EXIT_NO_RC
-0000CC 6A08           00340     CLRF    USUART_ERROR_FLAG
-0000CE 6AAE           00341     CLRF    RCREG1
-0000D0 0010           00342     RETFIE
-                      00343    ;</editor-fold>
-                      00344 
-                      00345     ;</editor-fold>
-                      00346 ;=========================================================
-                      00347 ;ISR
+                      00323     ;USUART Error handeling
+                      00324     ;------------------------------------------------
+                      00325      ;<editor-fold defaultstate="collapsed" desc="USUART_ERROR_HANDELING">
+                      00326 
+                      00327     ; Overrun error
+0000C0                00328 ErrSerialOverr
+0000C0 98AB           00329     BCF RCSTA1,CREN     ;reset the receiver logic
+0000C2 88AB           00330     BSF RCSTA1,CREN     ;enable reception again
+0000C4 8008           00331     BSF USUART_ERROR_FLAG,0
+0000C6 0012           00332     RETURN
+                      00333 
+                      00334     ; Framing error
+0000C8                00335 ErrSerialFrame
+0000C8 50AE           00336     MOVF RCREG1,W               ;discard received data that has error
+0000CA 8008           00337     BSF USUART_ERROR_FLAG,0
+0000CC 0012           00338     RETURN
+                      00339 
+                      00340     ; Nothing received
+0000CE                00341 EXIT_NO_RC
+0000CE 6A08           00342     CLRF    USUART_ERROR_FLAG
+0000D0 6AAE           00343     CLRF    RCREG1
+0000D2 0010           00344     RETFIE
+                      00345    ;</editor-fold>
+                      00346 
+                      00347     ;</editor-fold>
                       00348 ;=========================================================
-                      00349     ;<editor-fold defaultstate="collapsed" desc="ISR">
-                      00350 
-0000D2                00351 ISR
-                      00352     ;------------------------------------------------
-                      00353     ;USUART RX
+                      00349 ;ISR
+                      00350 ;=========================================================
+                      00351     ;<editor-fold defaultstate="collapsed" desc="ISR">
+                      00352 
+0000D4                00353 ISR
                       00354     ;------------------------------------------------
-                      00355     ;<editor-fold defaultstate="collapsed" desc="USUART RX">
-                      00356 
-0000D2 9A9D           00357     BCF PIE1, RC1IE ; Disable RX interrupt
-0000D4 BA9E           00358     BTFSC PIR1, RC1IF ; Check if the RX interrupt is set
-0000D6 EC?? F???      00359     CALL USUART_RECEIVE ; If RX interupt is set, CALL USUART_RECEIVE
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE  8
+                      00355     ;USUART RX
+                      00356     ;------------------------------------------------
+                      00357     ;<editor-fold defaultstate="collapsed" desc="USUART RX">
+                      00358 
+0000D4 9A9D           00359     BCF PIE1, RC1IE ; Disable RX interrupt
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE  8
 USUART Communication
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00360 
-                      00361     ;</editor-fold>
+0000D6 BA9E           00360     BTFSC PIR1, RC1IF ; Check if the RX interrupt is set
+0000D8 EC?? F???      00361     CALL USUART_RECEIVE ; If RX interupt is set, CALL USUART_RECEIVE
                       00362 
-                      00363     ;------------------------------------------------
-                      00364     ;USUART TX
+                      00363     ;</editor-fold>
+                      00364 
                       00365     ;------------------------------------------------
-                      00366     ;<editor-fold defaultstate="collapsed" desc="USUART TX">
-                      00367 
-                      00368     ; Normally the TX interrupt (PIE1, TX1IE) is disabled and is rather polled
-                      00369     ; when data is transfered to the TXREG1 register in order to transmit
-                      00370     ; The reason for this is for when something goes wrong and transmission
-                      00371     ; doesn't behave as expected. If the interrupt is enabled when this happens,
-                      00372     ; unpredictable and unexpected behaviour may occur. This comment field serves
-                      00373     ; only as a reference and remider for this design choice.
-                      00374 
-                      00375     ;</editor-fold>
+                      00366     ;USUART TX
+                      00367     ;------------------------------------------------
+                      00368     ;<editor-fold defaultstate="collapsed" desc="USUART TX">
+                      00369 
+                      00370     ; Normally the TX interrupt (PIE1, TX1IE) is disabled and is rather polled
+                      00371     ; when data is transfered to the TXREG1 register in order to transmit
+                      00372     ; The reason for this is for when something goes wrong and transmission
+                      00373     ; doesn't behave as expected. If the interrupt is enabled when this happens,
+                      00374     ; unpredictable and unexpected behaviour may occur. This comment field serves
+                      00375     ; only as a reference and remider for this design choice.
                       00376 
-                      00377     ;------------------------------------------------
-                      00378     ;USUART RX Error handeling
+                      00377     ;</editor-fold>
+                      00378 
                       00379     ;------------------------------------------------
-                      00380     ;<editor-fold defaultstate="collapsed" desc="USUART RX">
-                      00381 
-                      00382     ; Error handling : overrun error
-0000DA B2AB           00383     BTFSC RCSTA1,OERR ; Check for overrun error
-0000DC D???           00384     BRA ErrSerialOverr ; Handle overrun error
-                      00385 
-                      00386     ; Error handling : framing error
-0000DE B4AB           00387     BTFSC RCSTA1,FERR ; Check for framing error
-0000E0 D???           00388     BRA ErrSerialFrame ; Handle framing error
-                      00389 
-                      00390     ; Test if error occured
-0000E2 B008           00391     BTFSC USUART_ERROR_FLAG,0
-0000E4 D???           00392     BRA EXIT_NO_RC
-                      00393     ;</editor-fold>
-                      00394 
-0000E6 0012           00395     RETURN
+                      00380     ;USUART RX Error handeling
+                      00381     ;------------------------------------------------
+                      00382     ;<editor-fold defaultstate="collapsed" desc="USUART RX">
+                      00383 
+                      00384     ; Error handling : overrun error
+0000DC B2AB           00385     BTFSC RCSTA1,OERR ; Check for overrun error
+0000DE D???           00386     BRA ErrSerialOverr ; Handle overrun error
+                      00387 
+                      00388     ; Error handling : framing error
+0000E0 B4AB           00389     BTFSC RCSTA1,FERR ; Check for framing error
+0000E2 D???           00390     BRA ErrSerialFrame ; Handle framing error
+                      00391 
+                      00392     ; Test if error occured
+0000E4 B008           00393     BTFSC USUART_ERROR_FLAG,0
+0000E6 D???           00394     BRA EXIT_NO_RC
+                      00395     ;</editor-fold>
                       00396 
-                      00397     ;</editor-fold>
-                      00398     END
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE  9
+0000E8 0010           00397     RETFIE
+                      00398 
+                      00399     ;</editor-fold>
+                      00400     END
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE  9
 USUART Communication
 
 SYMBOL TABLE
@@ -515,7 +517,7 @@ AN25                              00000005
 AN26                              00000006
 AN27                              00000007
 AN3                               00000003
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 10
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 10
 USUART Communication
 
 SYMBOL TABLE
@@ -574,7 +576,7 @@ BCL2IE                            00000006
 BCL2IF                            00000006
 BCL2IP                            00000006
 BCLIE                             00000003
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 11
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 11
 USUART Communication
 
 SYMBOL TABLE
@@ -633,7 +635,7 @@ C2OUT_CM2CON                      00000006
 C2OUT_CM2CON0                     00000006
 C2OUT_PORTA                       00000005
 C2POL                             00000004
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 12
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 12
 USUART Communication
 
 SYMBOL TABLE
@@ -692,7 +694,7 @@ CCP3IF                            00000000
 CCP3IP                            00000000
 CCP3M0                            00000000
 CCP3M1                            00000001
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 13
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 13
 USUART Communication
 
 SYMBOL TABLE
@@ -751,7 +753,7 @@ CK1                               00000006
 CK2                               00000006
 CKE                               00000006
 CKP                               00000004
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 14
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 14
 USUART Communication
 
 SYMBOL TABLE
@@ -810,7 +812,7 @@ DC1B1                             00000005
 DC2B0                             00000004
 DC2B1                             00000005
 DC3B0                             00000004
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 15
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 15
 USUART Communication
 
 SYMBOL TABLE
@@ -867,15 +869,15 @@ EEIE                              00000004
 EEIF                              00000004
 EEIP                              00000004
 EEPGD                             00000007
-EXIT_NO_RC                        000000CC
-ErrSerialFrame                    000000C6
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 16
+EXIT_NO_RC                        000000CE
+ErrSerialFrame                    000000C8
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 16
 USUART Communication
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-ErrSerialOverr                    000000BE
+ErrSerialOverr                    000000C0
 FAST                              00000001
 FERR                              00000002
 FERR1                             00000002
@@ -904,9 +906,9 @@ GIE_GIEH                          00000007
 GO                                00000001
 GO_DONE                           00000001
 GO_NOT_DONE                       00000001
-Go_off0                           00000076
-Go_off1                           0000007A
-Go_off2                           0000007E
+Go_off0                           0000007A
+Go_off1                           0000007E
+Go_off2                           00000082
 HFIOFS                            00000002
 HLVDCON                           00000F9C
 HLVDEN                            00000004
@@ -928,7 +930,7 @@ INT0E                             00000004
 INT0F                             00000001
 INT0IE                            00000004
 INT0IF                            00000001
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 17
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 17
 USUART Communication
 
 SYMBOL TABLE
@@ -973,7 +975,7 @@ IRCF2                             00000006
 IRNG0                             00000000
 IRNG1                             00000001
 IRVST                             00000005
-ISR                               000000D2
+ISR                               000000D4
 ITRIM0                            00000002
 ITRIM1                            00000003
 ITRIM2                            00000004
@@ -987,7 +989,7 @@ KBI2                              00000006
 KBI3                              00000007
 LATA                              00000F89
 LATA0                             00000000
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 18
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 18
 USUART Communication
 
 SYMBOL TABLE
@@ -1046,7 +1048,7 @@ LVV0                              00000000
 LVV1                              00000001
 LVV2                              00000002
 LVV3                              00000003
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 19
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 19
 USUART Communication
 
 SYMBOL TABLE
@@ -1105,7 +1107,7 @@ P1A                               00000002
 P1B                               00000005
 P1C                               00000006
 P1D                               00000007
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 20
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 20
 USUART Communication
 
 SYMBOL TABLE
@@ -1164,7 +1166,7 @@ P3SSBD0                           00000000
 P3SSBD1                           00000001
 PC                                00000FF9
 PCIE                              00000006
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 21
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 21
 USUART Communication
 
 SYMBOL TABLE
@@ -1223,7 +1225,7 @@ PREINC0                           00000FEC
 PREINC1                           00000FE4
 PREINC2                           00000FDC
 PRISD                             00000002
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 22
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 22
 USUART Communication
 
 SYMBOL TABLE
@@ -1282,7 +1284,7 @@ RBIF                              00000000
 RBIP                              00000000
 RBPU                              00000007
 RC0                               00000000
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 23
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 23
 USUART Communication
 
 SYMBOL TABLE
@@ -1341,7 +1343,7 @@ RX91                              00000006
 RX92                              00000006
 RX9D                              00000000
 RX9D1                             00000000
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 24
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 24
 USUART Communication
 
 SYMBOL TABLE
@@ -1400,7 +1402,7 @@ SPBRG                             00000FAF
 SPBRG1                            00000FAF
 SPBRG2                            00000F75
 SPBRGH                            00000FB0
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 25
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 25
 USUART Communication
 
 SYMBOL TABLE
@@ -1459,7 +1461,7 @@ SSP2IP                            00000007
 SSP2MSK                           00000F6A
 SSP2STAT                          00000F6D
 SSPADD                            00000FC8
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 26
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 26
 USUART Communication
 
 SYMBOL TABLE
@@ -1518,7 +1520,7 @@ T0IE                              00000005
 T0IF                              00000002
 T0PS0                             00000000
 T0PS1                             00000001
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 27
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 27
 USUART Communication
 
 SYMBOL TABLE
@@ -1577,7 +1579,7 @@ T4CKPS0                           00000000
 T4CKPS1                           00000001
 T4CON                             00000F51
 T4OUTPS0                          00000003
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 28
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 28
 USUART Communication
 
 SYMBOL TABLE
@@ -1636,7 +1638,7 @@ TMR1IE                            00000000
 TMR1IF                            00000000
 TMR1IP                            00000000
 TMR1L                             00000FCE
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 29
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 29
 USUART Communication
 
 SYMBOL TABLE
@@ -1695,7 +1697,7 @@ TOS                               00000FFD
 TOSH                              00000FFE
 TOSL                              00000FFD
 TOSU                              00000FFF
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 30
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 30
 USUART Communication
 
 SYMBOL TABLE
@@ -1754,7 +1756,7 @@ TUN5                              00000005
 TX                                00000006
 TX1                               00000006
 TX1IE                             00000004
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 31
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 31
 USUART Communication
 
 SYMBOL TABLE
@@ -1800,12 +1802,12 @@ USUART_BUFFER_5                   00000005
 USUART_BUFFER_6                   00000006
 USUART_BUFFER_7                   00000007
 USUART_ERROR_FLAG                 00000008
-USUART_RECEIVE                    00000092
-USUART_RX_ECHO                    0000009C
+USUART_RECEIVE                    00000096
+USUART_RX_ECHO                    000000A0
 USUART_RX_ECHO_FLAG               00000009
-USUART_RX_END                     000000A0
+USUART_RX_END                     000000A4
 USUART_RX_PIN                     00000007
-USUART_TRANSMIT                   000000AC
+USUART_TRANSMIT                   000000AE
 USUART_TX_PIN                     00000006
 VDIRMAG                           00000007
 VPP                               00000003
@@ -1813,7 +1815,7 @@ VREFCON0                          00000F42
 VREFCON1                          00000F41
 VREFCON2                          00000F40
 VREFM                             00000002
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 32
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 32
 USUART Communication
 
 SYMBOL TABLE
@@ -1822,7 +1824,7 @@ SYMBOL TABLE
 VREFN                             00000002
 VREFP                             00000003
 W                                 00000000
-WAIT_FOR_TRANSMIT                 000000B2
+WAIT_FOR_TRANSMIT                 000000B4
 WCOL                              00000007
 WDTCON                            00000FD1
 WPUB                              00000F61
@@ -1872,7 +1874,7 @@ _CP2_OFF_5L                       000000FF
 _CP2_ON_5L                        000000FB
 _CP3_OFF_5L                       000000FF
 _CP3_ON_5L                        000000F7
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 33
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 33
 USUART Communication
 
 SYMBOL TABLE
@@ -1931,7 +1933,7 @@ _MCLRE_INTMCLR_3H                 0000007F
 _P2BMX_PORTC0_3H                  000000DF
 _P2BMX_PORTD2_3H                  000000FF
 _PBADEN_OFF_3H                    000000FD
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 34
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 34
 USUART Communication
 
 SYMBOL TABLE
@@ -1985,16 +1987,18 @@ _WRTD_ON_6H                       0000007F
 _XINST_OFF_4L                     000000BF
 _XINST_ON_4L                      000000FF
 __18F45K22                        00000001
+__DEBUG                           
+__MPLAB_DEBUGGER_PK3              1
 delay1                            0000000A
-delay1s                           00000072
+delay1s                           00000076
 delay2                            0000000B
-delay3                            0000000C
-
-MPASM 5.86                          MAIN.ASM   4-13-2020  11:13:22         PAGE 35
+MPASM 5.86                          MAIN.ASM   4-13-2020  11:18:24         PAGE 35
 USUART Communication
 
+SYMBOL TABLE
+  LABEL                             VALUE 
 
-
+delay3                            0000000C
 
 Errors   :     0
 Warnings :     0 reported,     0 suppressed

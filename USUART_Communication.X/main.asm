@@ -42,6 +42,13 @@
 
     ;</editor-fold>
 
+    ;<editor-fold defaultstate="collapsed" desc="USUART_FLAGS">
+
+    USUART_ERROR_FLAG ; Flag used for checking errors that occured with USUART
+    USUART_RX_ECHO_FLAG ; Flag used for echoing all received data
+
+    ;</editor-fold>
+
     ;----------------------------------------------
     ; DELAY Variables
     ;----------------------------------------------
@@ -205,6 +212,9 @@ SETUP
     BSF	TRISC,USUART_TX_PIN ; Set TX pin as input
     BSF	TRISC,USUART_RX_PIN ; Set RX pin as input
 
+    ; USUART Flags
+    BSF USUART_RX_ECHO_FLAG, 0 ; Enable or disable echo of received data
+
         ;</editor-fold>
     ;------------------------------------------------
     ;		Initialize Variables
@@ -228,6 +238,8 @@ MAIN
 
     BCF PIR1, TX1IF ; Clear USUART TX interrupts
     BCF PIE1, TX1IE ; Disable USUART TX interrupts
+
+    GOTO MAIN ; Loop MAIN
 
     ;</editor-fold>
 ;=========================================================
@@ -261,11 +273,127 @@ Go_off2
 ;=========================================================
    ;<editor-fold defaultstate="collapsed" desc="USUART">
 
-  ;</editor-fold>
+    ;------------------------------------------------
+    ;USUART_RECEIVE
+    ;------------------------------------------------
+    ;<editor-fold defaultstate="collapsed" desc="USUART_RECEIVE">
+
+USUART_RECEIVE
+    BCF PIE1, RC1IE ; Disable RX interrupts
+    MOVF RCREG1, W ; Move received byte to WREG
+
+    BTFSS USUART_RX_ECHO_FLAG, 0 ; Check the echo flag
+    GOTO USUART_RX_END
+
+USUART_RX_ECHO ; Echo the receive data
+    GOTO USUART_TRANSMIT
+
+USUART_RX_END ; End of the USUART_RECEIVE subroutine
+    BCF PIR1, RC1IF ; Clear RX interrupt
+    BSF PIE1, RC1IE ; Enable RX interrupt
+    BSF INTCON, GIE ; Enable Global interrupts
+    BSF INTCON, PEIE ; Enable Peripheral interrupts
+    RETFIE
+
+    ;</editor-fold>
+
+    ;------------------------------------------------
+    ;USUART_TRANSMIT
+    ;------------------------------------------------
+    ;<editor-fold defaultstate="collapsed" desc="USUART_TRANSMIT">
+
+USUART_TRANSMIT ; Transmit byte currently in WREG
+    BCF PIE1, RC1IE ; Disable RX interrupts
+    BCF PIR1, TX1IF ; Clear TX interrupts
+
+    MOVWF TXREG1 ; Move WREG byte to TX register
+
+WAIT_FOR_TRANSMIT ; Wait for data to be sent
+    BTFSS TXSTA1, TRMT ; Check if transmission is complete
+    GOTO WAIT_FOR_TRANSMIT ; Loop until complete
+
+    BSF PIE1, RC1IE ; Enable RX interrupts
+    BCF PIR1, TX1IF ; Clear TX interrupts
+    RETFIE
+
+    ;</editor-fold>
+
+    ;------------------------------------------------
+    ;USUART Error handeling
+    ;------------------------------------------------
+     ;<editor-fold defaultstate="collapsed" desc="USUART_ERROR_HANDELING">
+
+    ; Overrun error
+ErrSerialOverr
+    BCF RCSTA1,CREN	;reset the receiver logic
+    BSF RCSTA1,CREN	;enable reception again
+    BSF USUART_ERROR_FLAG,0
+    RETURN
+
+    ; Framing error
+ErrSerialFrame
+    MOVF RCREG1,W		;discard received data that has error
+    BSF	USUART_ERROR_FLAG,0
+    RETURN
+
+    ; Nothing received
+EXIT_NO_RC
+    CLRF    USUART_ERROR_FLAG
+    CLRF    RCREG1
+    RETFIE
+   ;</editor-fold>
+
+    ;</editor-fold>
 ;=========================================================
 ;ISR
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="ISR">
+
+ISR
+    ;------------------------------------------------
+    ;USUART RX
+    ;------------------------------------------------
+    ;<editor-fold defaultstate="collapsed" desc="USUART RX">
+
+    BCF PIE1, RC1IE ; Disable RX interrupt
+    BTFSC PIR1, RC1IF ; Check if the RX interrupt is set
+    CALL USUART_RECEIVE ; If RX interupt is set, CALL USUART_RECEIVE
+
+    ;</editor-fold>
+
+    ;------------------------------------------------
+    ;USUART TX
+    ;------------------------------------------------
+    ;<editor-fold defaultstate="collapsed" desc="USUART TX">
+
+    ; Normally the TX interrupt (PIE1, TX1IE) is disabled and is rather polled
+    ; when data is transfered to the TXREG1 register in order to transmit
+    ; The reason for this is for when something goes wrong and transmission
+    ; doesn't behave as expected. If the interrupt is enabled when this happens,
+    ; unpredictable and unexpected behaviour may occur. This comment field serves
+    ; only as a reference and remider for this design choice.
+
+    ;</editor-fold>
+
+    ;------------------------------------------------
+    ;USUART RX Error handeling
+    ;------------------------------------------------
+    ;<editor-fold defaultstate="collapsed" desc="USUART RX">
+
+    ; Error handling : overrun error
+    BTFSC RCSTA1,OERR ; Check for overrun error
+    BRA	ErrSerialOverr ; Handle overrun error
+
+    ; Error handling : framing error
+    BTFSC RCSTA1,FERR ; Check for framing error
+    BRA	ErrSerialFrame ; Handle framing error
+
+    ; Test if error occured
+    BTFSC USUART_ERROR_FLAG,0
+    BRA	EXIT_NO_RC
+    ;</editor-fold>
+
+    RETFIE
 
     ;</editor-fold>
     END
