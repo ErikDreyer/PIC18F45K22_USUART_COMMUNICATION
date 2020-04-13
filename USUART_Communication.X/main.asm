@@ -29,6 +29,18 @@
     ; -> Resulting in the first 8-bytes to be cleared
 
     ;------------------------------------------------
+    ;USUART SHIFT REGISTER
+    ;------------------------------------------------
+    ; -> The USUART shift register uses indirect addressing
+    ; -> The shift register uses both FSR0 and FSR1
+    ; -> The shift register is implemented as a FIFO queue
+    ; -> The shift register starts by pointing FSR1 and FSR0 to the last and second to last byte respectively
+    ; -> INDF1 then gets the value of INDF0
+    ; -> The loop is then repeated untill FSR1 is equal to 0
+    ; -> Thus the start of the shift register
+    ; -> The new data received from RXREG1 is then stored in the first byte if the USUART BUFFER
+
+    ;------------------------------------------------
     ;USUART TRANSMITION
     ;------------------------------------------------
     ; -> The PIC continiously loops until data is transmitted
@@ -369,6 +381,7 @@ USUART_RX_SHIFT_REGISTER    ; USUART RX shift register for RX history
     ;USUART ECHO
     ;------------------------------------------------
 USUART_RX_ECHO ; Echo the receive data
+    ; Received data must be in the WREG already when calling USUART_TRANSMIT
     GOTO USUART_TRANSMIT
 
     ;------------------------------------------------
@@ -505,7 +518,7 @@ ISR
 ;=========================================================
 
 ;<editor-fold defaultstate="collapsed" desc="FILL USUART SHIFT REGISTER">
-    
+
     ; Fill USUART shift register in order to test the shifting
     ; Requires a counter variable called TEMP_COUNTER
 
