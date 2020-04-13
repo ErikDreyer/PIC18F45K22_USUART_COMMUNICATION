@@ -1,4 +1,17 @@
 ;=========================================================
+;IMPLEMENTAION NOTES
+;=========================================================
+    ;<editor-fold defaultstate="collapsed" desc="IMPLEMENTATION NOTES">
+
+    ;------------------------------------------------
+    ;USUART
+    ;------------------------------------------------
+    ; -> TX interrupts are disabled at all times to prevent undesired behaviour
+    ; -> USUART_RX_ECHO_FLAG is used to echo all received data
+    ; -> USUART uses an 8-byte buffer implemented with indirect addressing
+
+    ;</editor-fold>
+;=========================================================
 ;HEADERS
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="Headers">
@@ -11,7 +24,7 @@
 ;=========================================================
 ;CONFIGURATION BITS
 ;=========================================================
-    ;<editor-fold defaultstate="collapsed" desc="Configuration Bits">
+    ;<editor-fold defaultstate="collapsed" desc="CONFIGURATION BITS">
 
     CONFIG  FOSC = INTIO67 ; Oscillator Selection bits (Internal oscillator block, port function on RA6 and RA7)
     CONFIG  WDTEN = OFF ; Watchdog Timer Enable bit (WDT is controlled by SWDTEN bit of the WDTCON register)
@@ -21,10 +34,9 @@
 ;=========================================================
 ;C BLOCK
 ;=========================================================
-    ;<editor-fold defaultstate="collapsed" desc="CBlock">
+    ;<editor-fold defaultstate="collapsed" desc="CBLOCK">
 
     CBLOCK 0x00 ; Start cblock at 0x00
-
 
     ;----------------------------------------------
     ; USUART Variables
@@ -66,7 +78,7 @@
 ;=========================================================
 ;VARIABLES
 ;=========================================================
-    ;<editor-fold defaultstate="collapsed" desc="Variables">
+    ;<editor-fold defaultstate="collapsed" desc="VARIABLES">
 
     ;----------------------------------------------
     ; USUART Variables and Flags
@@ -93,7 +105,7 @@ USUART_RX_PIN EQU RC7 ; Pin usef for RX of USUART
 ;=========================================================
 ;RESET VECTORS
 ;=========================================================
-    ;<editor-fold defaultstate="collapsed" desc="Reset Vectors">
+    ;<editor-fold defaultstate="collapsed" desc="RESET VECTORS">
 
     ORG 0x00
     GOTO SETUP ; GOTO the initial SETUP of the PIC
@@ -106,13 +118,13 @@ USUART_RX_PIN EQU RC7 ; Pin usef for RX of USUART
 ;=========================================================
 ;SETUP BLOCK
 ;=========================================================
-    ;<editor-fold defaultstate="collapsed" desc="Setup Block">
+    ;<editor-fold defaultstate="collapsed" desc="SETUP BLOCK">
 
 SETUP
     ;----------------------------------------------
     ;           OSCILLATOR SETUP
     ;----------------------------------------------
-    ;<editor-fold defaultstate="collapsed" desc="Oscillator Setup">
+    ;<editor-fold defaultstate="collapsed" desc="OSCILLATOR SETUP">
 
     ; Setup 4 MHz Oscillator
     BSF	OSCCON,IRCF0
@@ -175,17 +187,17 @@ SETUP
     ;<editor-fold defaultstate="collapsed" desc="Enable Periphiral Interrupts">
 
     ; Clear all
-    CLRF INTCON ; Clear the INTCON register
+    CLRF INTCON		; Clear the INTCON register
 
-    BSF	INTCON,PEIE ; Enable peripheral interrupts
-    BSF	INTCON,GIE ; Enable global interrupts
-    BSF	INTCON,INT0IE ; Enable external interrupts
+    BSF	INTCON,PEIE	; Enable peripheral interrupts
+    BSF	INTCON,GIE	; Enable global interrupts
+    BSF	INTCON,INT0IE	; Enable external interrupts
 
     ; Interrupts for USUART communication
-    BCF PIR1, RC1IF ; Clear USUART RX interrupt
-    BCF PIR1, TX1IF ; Clear USUART TX interrupt
-    BCF	PIE1,RC1IE ; Disable USUART RX interrupt
-    BCF	PIE1,TX1IE ; Disable USUART TX interrupt
+    BCF PIR1, RC1IF	; Clear USUART RX interrupt
+    BCF PIR1, TX1IF	; Clear USUART TX interrupt
+    BCF	PIE1,RC1IE	; Disable USUART RX interrupt
+    BCF	PIE1,TX1IE	; Disable USUART TX interrupt
 
     ;</editor-fold>
     ;------------------------------------------------
@@ -193,13 +205,13 @@ SETUP
     ;------------------------------------------------
     ;<editor-fold defaultstate="collapsed" desc="USUART">
 
-    CLRF    FSR0 ; Clear indirect addressing registers
+    CLRF    FSR0	; Clear indirect addressing registers
 
-    BSF TXSTA, TXEN ; Enable transmission
-    BSF TXSTA, BRGH ; Enable high baud rate select
+    BSF TXSTA, TXEN	; Enable transmission
+    BSF TXSTA, BRGH	; Enable high baud rate select
 
-    BSF RCSTA1, SPEN ; Enable serial port
-    BSF RCSTA1, CREN ; Enable continuous receive
+    BSF RCSTA1, SPEN	; Enable serial port
+    BSF RCSTA1, CREN	; Enable continuous receive
 
     ; Setting the baud rate for USUART
     MOVLW D'25' ; 9600 bps baud rate
@@ -209,11 +221,11 @@ SETUP
 
     ; For USUART RX and TX pins must be configured as inputs. The mode of the pins will automatically
     ; be controlled by the PIC
-    BSF	TRISC,USUART_TX_PIN ; Set TX pin as input
-    BSF	TRISC,USUART_RX_PIN ; Set RX pin as input
+    BSF	TRISC,USUART_TX_PIN	; Set TX pin as input
+    BSF	TRISC,USUART_RX_PIN	; Set RX pin as input
 
     ; USUART Flags
-    BSF USUART_RX_ECHO_FLAG, 0 ; Enable or disable echo of received data
+    BSF USUART_RX_ECHO_FLAG, 0	; Enable or disable echo of received data
 
         ;</editor-fold>
     ;------------------------------------------------
@@ -230,14 +242,14 @@ SETUP
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="MAIN">
 MAIN
-    BSF INTCON, GIE ; Enable Global interrupts
-    BSF INTCON, PEIE ; Enable Peripher interrupts
+    BSF INTCON, GIE	; Enable Global interrupts
+    BSF INTCON, PEIE	; Enable Peripher interrupts
 
-    BCF PIR1, RC1IF ; Clear USUART RX interrupts
-    BSF PIE1, RC1IE ; Enable USUART RX interrupts
+    BCF PIR1, RC1IF	; Clear USUART RX interrupts
+    BSF PIE1, RC1IE	; Enable USUART RX interrupts
 
-    BCF PIR1, TX1IF ; Clear USUART TX interrupts
-    BCF PIE1, TX1IE ; Disable USUART TX interrupts
+    BCF PIR1, TX1IF	; Clear USUART TX interrupts
+    BCF PIE1, TX1IE	; Disable USUART TX interrupts
 
     GOTO MAIN ; Loop MAIN
 
@@ -271,28 +283,34 @@ Go_off2
 ;=========================================================
 ;USUART
 ;=========================================================
-   ;<editor-fold defaultstate="collapsed" desc="USUART">
+    ;<editor-fold defaultstate="collapsed" desc="USUART">
 
     ;------------------------------------------------
-    ;USUART_RECEIVE
+    ;USUART RECEIVE
     ;------------------------------------------------
-    ;<editor-fold defaultstate="collapsed" desc="USUART_RECEIVE">
+    ;<editor-fold defaultstate="collapsed" desc="USUART RECEIVE">
 
 USUART_RECEIVE
-    BCF PIE1, RC1IE ; Disable RX interrupts
-    MOVF RCREG1, W ; Move received byte to WREG
+    BCF PIE1, RC1IE	; Disable RX interrupts
+    MOVF RCREG1, W	; Move received byte to WREG
 
-    BTFSS USUART_RX_ECHO_FLAG, 0 ; Check the echo flag
+    BTFSS USUART_RX_ECHO_FLAG, 0    ; Check the echo flag
     GOTO USUART_RX_END
 
+    ;------------------------------------------------
+    ;USUART ECHO
+    ;------------------------------------------------
 USUART_RX_ECHO ; Echo the receive data
     GOTO USUART_TRANSMIT
 
+    ;------------------------------------------------
+    ;USUART RX END
+    ;------------------------------------------------
 USUART_RX_END ; End of the USUART_RECEIVE subroutine
-    BCF PIR1, RC1IF ; Clear RX interrupt
-    BSF PIE1, RC1IE ; Enable RX interrupt
-    BSF INTCON, GIE ; Enable Global interrupts
-    BSF INTCON, PEIE ; Enable Peripheral interrupts
+    BCF PIR1, RC1IF	; Clear RX interrupt
+    BSF PIE1, RC1IE	; Enable RX interrupt
+    BSF INTCON, GIE	; Enable Global interrupts
+    BSF INTCON, PEIE	; Enable Peripheral interrupts
     RETFIE
 
     ;</editor-fold>
@@ -303,40 +321,49 @@ USUART_RX_END ; End of the USUART_RECEIVE subroutine
     ;<editor-fold defaultstate="collapsed" desc="USUART_TRANSMIT">
 
 USUART_TRANSMIT ; Transmit byte currently in WREG
-    BCF PIE1, RC1IE ; Disable RX interrupts
-    BCF PIR1, TX1IF ; Clear TX interrupts
+    BCF PIE1, RC1IE	; Disable RX interrupts
+    BCF PIR1, TX1IF	; Clear TX interrupts
 
     MOVWF TXREG1 ; Move WREG byte to TX register
 
-WAIT_FOR_TRANSMIT ; Wait for data to be sent
-    BTFSS TXSTA1, TRMT ; Check if transmission is complete
-    GOTO WAIT_FOR_TRANSMIT ; Loop until complete
+    ;------------------------------------------------
+    ;USUART TX WAIT FOR TRANSMIT
+    ;------------------------------------------------
+WAIT_FOR_TRANSMIT	    ; Wait for data to be sent
+    BTFSS TXSTA1, TRMT	    ; Check if transmission is complete
+    GOTO WAIT_FOR_TRANSMIT  ; Loop until complete
 
-    BSF PIE1, RC1IE ; Enable RX interrupts
-    BCF PIR1, TX1IF ; Clear TX interrupts
+    BSF PIE1, RC1IE	; Enable RX interrupts
+    BCF PIR1, TX1IF	; Clear TX interrupts
     RETFIE
 
     ;</editor-fold>
 
     ;------------------------------------------------
-    ;USUART Error handeling
+    ;USUART ERROR HANDELING
     ;------------------------------------------------
      ;<editor-fold defaultstate="collapsed" desc="USUART_ERROR_HANDELING">
 
-    ; Overrun error
+    ;------------------------------------------------
+    ;USUART OVERRUN ERROR
+    ;------------------------------------------------
 ErrSerialOverr
-    BCF RCSTA1,CREN	;reset the receiver logic
-    BSF RCSTA1,CREN	;enable reception again
-    BSF USUART_ERROR_FLAG,0
+    BCF RCSTA1,CREN	    ; Reset the receiver logic
+    BSF RCSTA1,CREN	    ; Enable reception again
+    BSF USUART_ERROR_FLAG,0 ; Set the error flag
     RETURN
 
-    ; Framing error
+    ;------------------------------------------------
+    ;USUART FRAMING ERROR
+    ;------------------------------------------------
 ErrSerialFrame
-    MOVF RCREG1,W		;discard received data that has error
-    BSF	USUART_ERROR_FLAG,0
+    MOVF RCREG1,W	    ; Discard received data that has error
+    BSF	USUART_ERROR_FLAG,0 ; Set the error flag
     RETURN
 
-    ; Nothing received
+    ;------------------------------------------------
+    ;USUART NOTHING RECEIVED
+    ;------------------------------------------------
 EXIT_NO_RC
     CLRF    USUART_ERROR_FLAG
     CLRF    RCREG1
@@ -378,19 +405,26 @@ ISR
     ;------------------------------------------------
     ;USUART RX Error handeling
     ;------------------------------------------------
-    ;<editor-fold defaultstate="collapsed" desc="USUART RX">
+    ;<editor-fold defaultstate="collapsed" desc="USUART RX ERROR">
 
-    ; Error handling : overrun error
+    ;------------------------------------------------
+    ;USUART OVERRUN ERROR
+    ;------------------------------------------------
     BTFSC RCSTA1,OERR ; Check for overrun error
     BRA	ErrSerialOverr ; Handle overrun error
 
-    ; Error handling : framing error
+    ;------------------------------------------------
+    ;USUART FRAMING ERROR
+    ;------------------------------------------------
     BTFSC RCSTA1,FERR ; Check for framing error
     BRA	ErrSerialFrame ; Handle framing error
 
-    ; Test if error occured
+    ;------------------------------------------------
+    ;USUART TEST FOR AN ERROR
+    ;------------------------------------------------
     BTFSC USUART_ERROR_FLAG,0
     BRA	EXIT_NO_RC
+
     ;</editor-fold>
 
     RETFIE
