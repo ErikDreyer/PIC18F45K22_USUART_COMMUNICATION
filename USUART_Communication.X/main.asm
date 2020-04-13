@@ -18,6 +18,17 @@
     ; -> The first 8 bytes of the CBLOCK is reserved for this buffer
 
     ;------------------------------------------------
+    ;USUART CLEAR BUFFER
+    ;------------------------------------------------
+    ; Clearing the buffer, or ensuring that it is empty is simple
+    ; -> Indirect addressing is used to achieve this
+    ; -> The FSR0 pointer is clear
+    ; -> The lower byte of the byte is set to point to the 8th byte in the CBLOCK
+    ; -> POSTDEC0 is used to clear the contents of the register that FSR0L is pointing to and then FSR0L is decremented
+    ; -> The loop is repeated until FSR0L is equal to 0h, thus the start of the CBLOCK
+    ; -> Resulting in the first 8-bytes to be cleared
+
+    ;------------------------------------------------
     ;USUART TRANSMITION
     ;------------------------------------------------
     ; -> The PIC continiously loops until data is transmitted
@@ -73,7 +84,6 @@
     USUART_RX_ECHO_FLAG ; Flag used for echoing all received data
 
     ;</editor-fold>
-
     ;----------------------------------------------
     ; DELAY Variables
     ;----------------------------------------------
@@ -82,6 +92,14 @@
     delay1
     delay2
     delay3
+
+    ;</editor-fold>
+    ;----------------------------------------------
+    ; TEMP and DEBUG Variables
+    ;----------------------------------------------
+    ;<editor-fold defaultstate="collapsed" desc="TEMP AND DEBUG VARIABLES">
+
+    TEMP_COUNTER
 
     ;</editor-fold>
 
@@ -325,21 +343,24 @@ Go_off2
 USUART_RECEIVE
     BCF PIE1, RC1IE	; Disable RX interrupts
 
-    MOVLW 8h ; Store the value of 8h in WREG
-    MOVWF INDF1 ; Point the FSR1 to the 8th byte in the CBLOCK
+    CLRF FSR1	    ; Clear the indirect addressing scheme
+    MOVLW 8h	    ; Store the value of 8h in WREG
+    MOVWF FSR1L	    ; Point the FSR1L to the 8th byte in the CBLOCK
 
-    MOVLW 7h ; Store the value of 7h in WREG
-    MOVWF INDF0 ; Point the FSR0 to the 7th byte in the CBLOCK
+    CLRF FSR0	    ; Clear the indirect addressing scheme
+    MOVLW 7h	    ; Store the value of 7h in WREG
+    MOVWF FSR0L	    ; Point the FSR0L to the 7th byte in the CBLOCK
 
-    MOVLW 0h ; MOV 0h to WREG to loop and skip
-USUART_RX_SHIFT_REGISTER ; USUART RX shift register for RX history
-    MOVFF POSTDEC0, POSTDEC1
+    MOVLW 0h	    ; MOV 0h to WREG to loop and skip
 
-    CPFSEQ INDF1 ; Compare with WREG, check if 0
-    GOTO USUART_RX_SHIFT_REGISTER ; Loop if INDF1 not ZERO
+USUART_RX_SHIFT_REGISTER    ; USUART RX shift register for RX history
+    MOVFF POSTDEC0, POSTDEC1	; MOV the contents of FSR0 to FSR1 and decrement
+
+    CPFSEQ FSR1L    ; Compare with WREG, check if 0, thus start of CBLOCK
+    GOTO USUART_RX_SHIFT_REGISTER ; Loop if FSR1L not ZERO
 
     MOVF RCREG1, W	; Move received byte to WREG
-    MOVWF INDF1 ; MOV the received data to the first byte in the USUART BUFFER
+    MOVWF USUART_BUFFER_0 ; MOV the received data to the first byte in the USUART BUFFER
 
     BTFSS USUART_RX_ECHO_FLAG, 0    ; Check the echo flag
     GOTO USUART_RX_END
@@ -479,3 +500,26 @@ ISR
     ;</editor-fold>
     END
 
+;=========================================================
+; TESTING SNIPPETS
+;=========================================================
+
+;<editor-fold defaultstate="collapsed" desc="FILL USUART SHIFT REGISTER">
+    
+    ; Fill USUART shift register in order to test the shifting
+    ; Requires a counter variable called TEMP_COUNTER
+
+    CLRF FSR0 ; Clear indirect addressing scheme
+    MOVLW 8h ; MOV 0h to WREG
+    MOVWF FSR0L ; Set the pointer to the first address in the CBLOCK
+
+    MOVLW 8h ; MOV 0h to WREG
+    MOVWF TEMP_COUNTER
+
+FILL_SHIFT_REGISTER
+    MOVWF POSTDEC0 ; MOV WREG to the pointer's register
+    DECF TEMP_COUNTER
+    MOVF TEMP_COUNTER, W; Decrement WREG
+    BNZ FILL_SHIFT_REGISTER
+
+;</editor-fold>

@@ -1,12 +1,12 @@
 MPLINK 5.09, LINKER
-Linker Map File - Created Mon Apr 13 12:21:30 2020
+Linker Map File - Created Mon Apr 13 12:48:22 2020
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
                    .org_0       code   0x000000    program   0x000004
                    .cinit    romdata   0x000004    program   0x000002
-                   .org_1       code   0x000008    program   0x00010c
+                   .org_1       code   0x000008    program   0x000120
 .config_300001_BUILD/DEFAULT/DEBUG/MAIN.O    romdata   0x300001    program   0x000001
 .config_300003_BUILD/DEFAULT/DEBUG/MAIN.O    romdata   0x300003    program   0x000001
 .config_300006_BUILD/DEFAULT/DEBUG/MAIN.O    romdata   0x300006    program   0x000001
@@ -17,11 +17,11 @@ Linker Map File - Created Mon Apr 13 12:21:30 2020
                                Start         End      
                            ---------   ---------      
                             0x000000    0x000005      
-                            0x000008    0x000113      
+                            0x000008    0x000127      
                             0x300001    0x300001      
                             0x300003    0x300003      
                             0x300006    0x300006      
-            277 out of 33048 program addresses used, program memory utilization is 0%
+            297 out of 33048 program addresses used, program memory utilization is 0%
 
 
 
@@ -29,22 +29,23 @@ Linker Map File - Created Mon Apr 13 12:21:30 2020
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
       CLEAR_USUART_BUFFER   0x00006e    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-               EXIT_NO_RC   0x0000f8    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-           ErrSerialFrame   0x0000f2    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-           ErrSerialOverr   0x0000ea    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-                  Go_off0   0x00008e    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-                  Go_off1   0x000092    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-                  Go_off2   0x000096    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-                      ISR   0x0000fe    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-                     MAIN   0x00007a    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+               EXIT_NO_RC   0x00010c    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+           ErrSerialFrame   0x000106    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+           ErrSerialOverr   0x0000fe    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+      FILL_SHIFT_REGISTER   0x0000b4    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+                  Go_off0   0x00008c    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+                  Go_off1   0x000090    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+                  Go_off2   0x000094    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+                      ISR   0x000112    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+                     MAIN   0x000078    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
                     SETUP   0x000010    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-           USUART_RECEIVE   0x0000aa    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-           USUART_RX_ECHO   0x0000ca    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-            USUART_RX_END   0x0000ce    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
- USUART_RX_SHIFT_REGISTER   0x0000b6    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-          USUART_TRANSMIT   0x0000d8    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-        WAIT_FOR_TRANSMIT   0x0000de    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-                  delay1s   0x00008a    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+           USUART_RECEIVE   0x0000a8    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+           USUART_RX_ECHO   0x0000de    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+            USUART_RX_END   0x0000e2    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+ USUART_RX_SHIFT_REGISTER   0x0000ca    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+          USUART_TRANSMIT   0x0000ec    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+        WAIT_FOR_TRANSMIT   0x0000f2    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+                  delay1s   0x000088    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
 
 
 
@@ -53,20 +54,21 @@ Linker Map File - Created Mon Apr 13 12:21:30 2020
                 ---------  ---------  ---------  --------- ---------                
                     SETUP   0x000010    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
       CLEAR_USUART_BUFFER   0x00006e    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-                     MAIN   0x00007a    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-                  delay1s   0x00008a    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-                  Go_off0   0x00008e    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-                  Go_off1   0x000092    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-                  Go_off2   0x000096    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-           USUART_RECEIVE   0x0000aa    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
- USUART_RX_SHIFT_REGISTER   0x0000b6    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-           USUART_RX_ECHO   0x0000ca    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-            USUART_RX_END   0x0000ce    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-          USUART_TRANSMIT   0x0000d8    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-        WAIT_FOR_TRANSMIT   0x0000de    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-           ErrSerialOverr   0x0000ea    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-           ErrSerialFrame   0x0000f2    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-               EXIT_NO_RC   0x0000f8    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
-                      ISR   0x0000fe    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+                     MAIN   0x000078    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+                  delay1s   0x000088    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+                  Go_off0   0x00008c    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+                  Go_off1   0x000090    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+                  Go_off2   0x000094    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+           USUART_RECEIVE   0x0000a8    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+      FILL_SHIFT_REGISTER   0x0000b4    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+ USUART_RX_SHIFT_REGISTER   0x0000ca    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+           USUART_RX_ECHO   0x0000de    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+            USUART_RX_END   0x0000e2    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+          USUART_TRANSMIT   0x0000ec    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+        WAIT_FOR_TRANSMIT   0x0000f2    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+           ErrSerialOverr   0x0000fe    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+           ErrSerialFrame   0x000106    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+               EXIT_NO_RC   0x00010c    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
+                      ISR   0x000112    program     static F:\Google Drive\Tuks\year_3\emk_310\Code\PIC18F45K22_USUART_COMMUNICATION\USUART_Communication.X\main.asm
 
 
