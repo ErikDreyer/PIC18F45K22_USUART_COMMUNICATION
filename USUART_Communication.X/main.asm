@@ -8,7 +8,20 @@
     ;------------------------------------------------
     ; -> TX interrupts are disabled at all times to prevent undesired behaviour
     ; -> USUART_RX_ECHO_FLAG is used to echo all received data
+    ; -> 8-byte commands will be used and testing for this length will be conducted
+    ; -> using more than 8-bytes may result in undesired behaviour
+
+    ;------------------------------------------------
+    ;USUART BUFFER
+    ;------------------------------------------------
     ; -> USUART uses an 8-byte buffer implemented with indirect addressing
+    ; -> The first 8 bytes of the CBLOCK is reserved for this buffer
+
+    ;------------------------------------------------
+    ;USUART TRANSMITION
+    ;------------------------------------------------
+    ; -> The PIC continiously loops until data is transmitted
+    ; -> During this period other interrupts are disabled
 
     ;</editor-fold>
 ;=========================================================
@@ -224,15 +237,34 @@ SETUP
     BSF	TRISC,USUART_TX_PIN	; Set TX pin as input
     BSF	TRISC,USUART_RX_PIN	; Set RX pin as input
 
-    ; USUART Flags
+    ;</editor-fold>
+
+    ;------------------------------------------------
+    ; INITIALIZE VARIABLES
+    ;------------------------------------------------
+    ;<editor-fold defaultstate="collapsed" desc="INITIALIZE VARIABLES">
+
+    ;<editor-fold defaultstate="collapsed" desc="USUART VARIABLES">
+    ;------------------------------------------------
+    ; USUART FLAGS
+    ;------------------------------------------------
     BSF USUART_RX_ECHO_FLAG, 0	; Enable or disable echo of received data
 
-        ;</editor-fold>
     ;------------------------------------------------
-    ;		Initialize Variables
+    ; USUART BUFFER
     ;------------------------------------------------
-    ;<editor-fold defaultstate="collapsed" desc="Initialize Variables">
+    CLRF FSR0 ; Clear the indirect addressing scheme
+    MOVLW 8h ; Store the value of 8h in WREG
+    MOVWF FSR0L ; Point FSR0L to the 8th address, the end of the USUART BUFFER
+    MOVLW 0h ; MOV 0h to WREG in order to compare and skip the loop
 
+CLEAR_USUART_BUFFER ; Set all values in the USUART BUFFER
+    MOVLW 0h ; Store value of 0 in WREG
+    MOVWF POSTDEC0 ; Post-decrement and MOV 0 to the INF0 register
+
+    CPFSEQ FSR0L ; Check if the address is the first addrss 0x00 in the CBLOCK
+    GOTO CLEAR_USUART_BUFFER ; Loop if not at the 0th address
+    ;</editor-fold>
 
     ;</editor-fold>
 
@@ -285,14 +317,29 @@ Go_off2
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="USUART">
 
+    ;<editor-fold defaultstate="collapsed" desc="USUART RECEIVE">
+
     ;------------------------------------------------
     ;USUART RECEIVE
     ;------------------------------------------------
-    ;<editor-fold defaultstate="collapsed" desc="USUART RECEIVE">
-
 USUART_RECEIVE
     BCF PIE1, RC1IE	; Disable RX interrupts
+
+    MOVLW 8h ; Store the value of 8h in WREG
+    MOVWF INDF1 ; Point the FSR1 to the 8th byte in the CBLOCK
+
+    MOVLW 7h ; Store the value of 7h in WREG
+    MOVWF INDF0 ; Point the FSR0 to the 7th byte in the CBLOCK
+
+    MOVLW 0h ; MOV 0h to WREG to loop and skip
+USUART_RX_SHIFT_REGISTER ; USUART RX shift register for RX history
+    MOVFF POSTDEC0, POSTDEC1
+
+    CPFSEQ INDF1 ; Compare with WREG, check if 0
+    GOTO USUART_RX_SHIFT_REGISTER ; Loop if INDF1 not ZERO
+
     MOVF RCREG1, W	; Move received byte to WREG
+    MOVWF INDF1 ; MOV the received data to the first byte in the USUART BUFFER
 
     BTFSS USUART_RX_ECHO_FLAG, 0    ; Check the echo flag
     GOTO USUART_RX_END
