@@ -1,10 +1,10 @@
 ;=========================================================
-;IMPLEMENTAION NOTES
+; IMPLEMENTAION NOTES
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="IMPLEMENTATION NOTES">
 
     ;------------------------------------------------
-    ;USUART
+    ; USUART
     ;------------------------------------------------
     ; -> TX interrupts are disabled at all times to prevent undesired behaviour
     ; -> USUART_RX_ECHO_FLAG is used to echo all received data
@@ -12,13 +12,13 @@
     ; -> using more than 8-bytes may result in undesired behaviour
 
     ;------------------------------------------------
-    ;USUART BUFFER
+    ; USUART BUFFER
     ;------------------------------------------------
     ; -> USUART uses an 8-byte buffer implemented with indirect addressing
     ; -> The first 8 bytes of the CBLOCK is reserved for this buffer
 
     ;------------------------------------------------
-    ;USUART CLEAR BUFFER
+    ; USUART CLEAR BUFFER
     ;------------------------------------------------
     ; Clearing the buffer, or ensuring that it is empty is simple
     ; -> Indirect addressing is used to achieve this
@@ -29,7 +29,7 @@
     ; -> Resulting in the first 8-bytes to be cleared
 
     ;------------------------------------------------
-    ;USUART SHIFT REGISTER
+    ; USUART SHIFT REGISTER
     ;------------------------------------------------
     ; -> The USUART shift register uses indirect addressing
     ; -> The shift register uses both FSR0 and FSR1
@@ -41,14 +41,14 @@
     ; -> The new data received from RXREG1 is then stored in the first byte if the USUART BUFFER
 
     ;------------------------------------------------
-    ;USUART TRANSMITION
+    ; USUART TRANSMITION
     ;------------------------------------------------
     ; -> The PIC continiously loops until data is transmitted
     ; -> During this period other interrupts are disabled
 
     ;</editor-fold>
 ;=========================================================
-;HEADERS
+; HEADERS
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="Headers">
 
@@ -58,7 +58,7 @@
 
     ;</editor-fold>
 ;=========================================================
-;CONFIGURATION BITS
+; CONFIGURATION BITS
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="CONFIGURATION BITS">
 
@@ -68,7 +68,7 @@
 
     ;</editor-fold>
 ;=========================================================
-;C BLOCK
+; C BLOCK
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="CBLOCK">
 
@@ -111,7 +111,7 @@
     ;----------------------------------------------
     ;<editor-fold defaultstate="collapsed" desc="TEMP AND DEBUG VARIABLES">
 
-    TEMP_COUNTER
+    TEMP_COUNTER ; TEMP COUNTER used for testing and debugging
 
     ;</editor-fold>
 
@@ -119,7 +119,7 @@
 
     ;</editor-fold>
 ;=========================================================
-;VARIABLES
+; VARIABLES
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="VARIABLES">
 
@@ -146,7 +146,7 @@ USUART_RX_PIN EQU RC7 ; Pin usef for RX of USUART
 
     ;</editor-fold>
 ;=========================================================
-;RESET VECTORS
+; RESET VECTORS
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="RESET VECTORS">
 
@@ -159,13 +159,13 @@ USUART_RX_PIN EQU RC7 ; Pin usef for RX of USUART
 
     ;</editor-fold>
 ;=========================================================
-;SETUP BLOCK
+; SETUP BLOCK
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="SETUP BLOCK">
 
 SETUP
     ;----------------------------------------------
-    ;           OSCILLATOR SETUP
+    ; OSCILLATOR SETUP
     ;----------------------------------------------
     ;<editor-fold defaultstate="collapsed" desc="OSCILLATOR SETUP">
 
@@ -175,9 +175,8 @@ SETUP
     BSF	OSCCON,IRCF2
 
     ;</editor-fold>
-
     ;------------------------------------------------
-    ;		    INIT PORT A
+    ; INIT PORT A
     ;------------------------------------------------
     ;<editor-fold defaultstate="collapsed" desc="Initialize Port A">
 
@@ -189,7 +188,7 @@ SETUP
 
     ;</editor-fold>
     ;------------------------------------------------
-    ;		    INIT PORT B
+    ; INIT PORT B
     ;------------------------------------------------
     ;<editor-fold defaultstate="collapsed" desc="Initialize Port B">
 
@@ -199,9 +198,9 @@ SETUP
     CLRF TRISB		; clear bits for all pins
     CLRF ANSELB		; clear bits for all pins
 
-        ;</editor-fold>
+    ;</editor-fold>
     ;------------------------------------------------
-    ;		    INIT PORT C
+    ; INIT PORT C
     ;------------------------------------------------
     ;<editor-fold defaultstate="collapsed" desc="Initialize Port C">
 
@@ -211,9 +210,9 @@ SETUP
     CLRF TRISC		; clear bits for all pins
     CLRF ANSELC		; clear bits for all pins
 
-        ;</editor-fold>
+    ;</editor-fold>
     ;------------------------------------------------
-    ;		    INIT PORT D
+    ; INIT PORT D
     ;------------------------------------------------
     ;<editor-fold defaultstate="collapsed" desc="Initialize Port D">
 
@@ -225,7 +224,7 @@ SETUP
 
     ;</editor-fold>
     ;------------------------------------------------
-    ;		    ENABLE PERIPHERAL INTERRUPTS
+    ; ENABLE PERIPHERAL INTERRUPTS
     ;------------------------------------------------
     ;<editor-fold defaultstate="collapsed" desc="Enable Periphiral Interrupts">
 
@@ -244,7 +243,7 @@ SETUP
 
     ;</editor-fold>
     ;------------------------------------------------
-    ;		    USUART SETUP
+    ; USUART SETUP
     ;------------------------------------------------
     ;<editor-fold defaultstate="collapsed" desc="USUART">
 
@@ -300,7 +299,7 @@ CLEAR_USUART_BUFFER ; Set all values in the USUART BUFFER
 
     ;</editor-fold>
 ;=========================================================
-;MAIN
+; MAIN
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="MAIN">
 MAIN
@@ -317,7 +316,7 @@ MAIN
 
     ;</editor-fold>
 ;=========================================================
-;DELAYS
+; DELAYS
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="DELAYS">
 
@@ -343,14 +342,14 @@ Go_off2
 
     ;</editor-fold>
 ;=========================================================
-;USUART
+; USUART
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="USUART">
 
     ;<editor-fold defaultstate="collapsed" desc="USUART RECEIVE">
 
     ;------------------------------------------------
-    ;USUART RECEIVE
+    ; USUART RECEIVE
     ;------------------------------------------------
 USUART_RECEIVE
     BCF PIE1, RC1IE	; Disable RX interrupts
@@ -365,6 +364,9 @@ USUART_RECEIVE
 
     MOVLW 0h	    ; MOV 0h to WREG to loop and skip
 
+    ;------------------------------------------------
+    ; USUART SHIFT REGISTER
+    ;------------------------------------------------
 USUART_RX_SHIFT_REGISTER    ; USUART RX shift register for RX history
     MOVFF POSTDEC0, POSTDEC1	; MOV the contents of FSR0 to FSR1 and decrement
 
@@ -378,14 +380,14 @@ USUART_RX_SHIFT_REGISTER    ; USUART RX shift register for RX history
     GOTO USUART_RX_END
 
     ;------------------------------------------------
-    ;USUART ECHO
+    ; USUART ECHO
     ;------------------------------------------------
 USUART_RX_ECHO ; Echo the receive data
     ; Received data must be in the WREG already when calling USUART_TRANSMIT
     GOTO USUART_TRANSMIT
 
     ;------------------------------------------------
-    ;USUART RX END
+    ; USUART RX END
     ;------------------------------------------------
 USUART_RX_END ; End of the USUART_RECEIVE subroutine
     BCF PIR1, RC1IF	; Clear RX interrupt
@@ -397,7 +399,7 @@ USUART_RX_END ; End of the USUART_RECEIVE subroutine
     ;</editor-fold>
 
     ;------------------------------------------------
-    ;USUART_TRANSMIT
+    ; USUART_TRANSMIT
     ;------------------------------------------------
     ;<editor-fold defaultstate="collapsed" desc="USUART_TRANSMIT">
 
@@ -421,7 +423,7 @@ WAIT_FOR_TRANSMIT	    ; Wait for data to be sent
     ;</editor-fold>
 
     ;------------------------------------------------
-    ;USUART ERROR HANDELING
+    ; USUART ERROR HANDELING
     ;------------------------------------------------
      ;<editor-fold defaultstate="collapsed" desc="USUART_ERROR_HANDELING">
 
@@ -453,7 +455,7 @@ EXIT_NO_RC
 
     ;</editor-fold>
 ;=========================================================
-;ISR
+; ISR
 ;=========================================================
     ;<editor-fold defaultstate="collapsed" desc="ISR">
 
